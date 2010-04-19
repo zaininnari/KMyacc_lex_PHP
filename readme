@@ -21,9 +21,9 @@ http://svn.webkit.org/repository/webkit/trunk/WebCore/css/tokenizer.flex
 amachang さん作との違い :
 
 1点目 : 
-  汎用的な機能をもった lexer クラスと
-  lexer クラスに WebKit の CSS の字句解析に必要な情報を
-  オーバーライドした Csslexer クラスという構成になっています。
+  汎用的な機能をもった Lexer クラスと
+  Lexer クラスに WebKit の CSS の字句解析に必要な情報を
+  オーバーライドした CssLexer クラスという構成になっています。
 
   そのため、
   amachang さん作では、
@@ -32,7 +32,7 @@ amachang さん作との違い :
   無視をするかどうかを制御する setIgnore メソッドを追加しています。
 
 2点目 :
-  lexer クラスは、トークンの値を含んでいないため、
+  Lexer クラスは、トークンの値を含んでいないため、
   その結果の扱いには、注意が必要です。
 
   なぜなら、
@@ -43,7 +43,7 @@ amachang さん作との違い :
    但し、その場合には、
    yacc 側のトークン値が変化した場合、lex 側を書き直す処理が必要になります。)
 
-  lexer::lex() では、以下の結果を返します。
+  Lexer::lex() では、以下の結果を返します。
 
   array(
   	$maybe_yychar, // トークン名の文字列(string) または ASCII 値
@@ -65,14 +65,14 @@ amachang さん作との違い :
     const INTEGER = 257;
     /* 略 */
   } 
-  と定義されている中で yylex() から、lexer クラスを呼ぶ場合
+  と定義されている中で yylex() から、Lexer クラスを呼ぶ場合
 
   /**
    * $maybe_yychar => string 'INTEGER'
    * $value        => string '123'
    * $next         => string ''
    */
-  list($maybe_yychar, $value, $next) = lexer::lex('123');
+  list($maybe_yychar, $value, $next) = Lexer::lex('123');
   $yychar = is_string($maybe_yychar) ? constant('self::' . $maybe_yychar) : $maybe_yychar;
 
 
