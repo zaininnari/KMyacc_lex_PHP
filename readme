@@ -1,0 +1,145 @@
+lex
+=====
+PHP 5.3 or higher is required.
+PHP 5.3 以上が必要です。
+	静的な呼び出しの継承に
+	遅延静的束縛 (Late Static Bindings)を使用しているためです。
+	http://php.net/manual/ja/language.oop5.late-static-bindings.php
+	PHP 5.3 未満で使用するには、
+	継承を止めて、「static::」を「self::」に書き直します。
+
+amachang さん以下のものをPHPに移植したものです。
+
+「WebKit の CSS の字句解析部分を JavaScript に移植しました」
+http://d.hatena.ne.jp/amachang/20080502/1209732467
+
+
+規則部の移植元 :
+http://svn.webkit.org/repository/webkit/trunk/WebCore/css/tokenizer.flex
+
+
+amachang さん作との違い :
+
+1点目 : 
+  汎用的な機能をもった lexer クラスと
+  lexer クラスに WebKit の CSS の字句解析に必要な情報を
+  オーバーライドした Csslexer クラスという構成になっています。
+
+  そのため、
+  amachang さん作では、
+  直接書かれていた css のコメント部分を無視している処理を一般化しています。
+  また、
+  無視をするかどうかを制御する setIgnore メソッドを追加しています。
+
+2点目 :
+  lexer クラスは、トークンの値を含んでいないため、
+  その結果の扱いには、注意が必要です。
+
+  なぜなら、
+  トークンの値は、 yacc などの構文解析器生成系による生成が必要で、
+  lex だけではその値を知り得ないためです。
+  (yacc と lex はセットで扱うので、
+   lex の中に含んでしまうのも可能です。
+   但し、その場合には、
+   yacc 側のトークン値が変化した場合、lex 側を書き直す処理が必要になります。)
+
+  lexer::lex() では、以下の結果を返します。
+
+  array(
+  	$maybe_yychar, // トークン名の文字列(string) または ASCII 値
+  	$value,        // マッチした文字列
+  	$next          // マッチした文字列を削除したソース
+  );
+
+  本来は、トークンの値(int)、または、ASCII 値(int)を返す必要がありますが、
+  トークンの値を「知らない」ことになっているため、
+  マッチしたトークンについては、そのトークン名を文字列(string)で返し、
+  そうでないものは、ASCII 値(int)を返します。
+
+  そのため、
+  呼び出し側で、トークンの値を適当に返す必要があります。
+
+  例)
+  class KMyacc
+  {
+    const INTEGER = 257;
+    /* 略 */
+  } 
+  と定義されている中で yylex() から、lexer クラスを呼ぶ場合
+
+  /**
+   * $maybe_yychar => string 'INTEGER'
+   * $value        => string '123'
+   * $next         => string ''
+   */
+  list($maybe_yychar, $value, $next) = lexer::lex('123');
+  $yychar = is_string($maybe_yychar) ? constant('self::' . $maybe_yychar) : $maybe_yychar;
+
+
+yacc
+======
+kmyacc の PHPテンプレートをクラスで書き直したものです。
+
+-kmyacc - 多言語対応LALRパーサー生成系
+--http://www005.upp.so-net.ne.jp/kmori/kmyacc/
+--yaccの生成を多言語できるように、テンプレート機能を持ったパーサー生成
+--手を加えるのが簡単すぎる。
+-PHP版のテンプレートの元を作った方
+--PHPのyaccを作ったよ - ベイエリア情報局
+--http://blog.bz2.jp/archives/2008/01/phpyacc.html
+-上記のバグを修正した方
+--ActionScriptのyaccを作ったよ - yukobaのブログ
+--http://d.hatena.ne.jp/yukoba/20080220/p1
+--今回は、このPHPテンプレートを元に手を加えています。
+-インストール&デモ
+--ハタさんのブログ(復刻版) : kmyacc-phpを触る
+--http://blog.xole.net/article.php?id=653
+-各種パッチを当てまくったkmyacc
+--kmyacc に各種パッチを当てまくったバージョンを fork しました - muddy brown thang
+--http://d.hatena.ne.jp/moriyoshi/20090824/1251119737
+
+
+基本的なコマンド
+====
+
+normal mode
+	「calc.phpy」を使って生成します。
+	kmyacc calc.phpy
+
+debug mode (通常は削除されるデバック用コードを残します)
+	kmyacc -t calc.phpy
+
+custom model 
+(デフォルト(/usr/local/lib/kmyacc)でなく自前のテンプレートを使用します。)
+	kmyacc -m /<path>/kmyacc.php.parser calc.phpy 
+
+
+
+
+kmyacc
+======
+
+kmyacc is an LALR(1) parser generator.
+
+HP : http://www005.upp.so-net.ne.jp/kmori/kmyacc/
+
+kmyacc COPYRIGHT
+=========
+
+Copyright (C) 1987,1989,1992,1993,2005,2006  MORI Koichiro.
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
+
+

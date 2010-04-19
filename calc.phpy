@@ -1,0 +1,61 @@
+/*
+ * calculator
+ */
+
+%token NUMBER
+
+%left '+' '-'
+%left '*' '/'
+
+%%
+
+start:	lines;
+
+lines: /* empty */
+	| lines line
+        ;
+
+line	: expr { return $1; }
+	| '\n' { return '(empty line ignored)'; }
+	| error { return false; }
+	;
+
+expr	: expr '+' expr { $$ = $1 + $3; }
+	| expr '-' expr { $$ = $1 - $3; }
+	| expr '*' expr { $$ = $1 * $3; }
+	| expr '/' expr { $$ = $1 / $3; }
+	| '(' expr ')' { $$ = $2; }
+	| NUMBER { $$ = $1; }
+	;
+
+%%
+
+	protected static function yylex()
+	{
+		$lexbuf = self::$lexbuf;
+
+		if (preg_match('/^(\d+)/', $lexbuf, $matches)) {
+			self::$yylval = (int)$matches[1];
+			self::$lexbuf = substr($lexbuf, strlen($matches[1]));
+			return self::NUMBER;
+		}
+		$ret = ord($lexbuf);
+		self::$lexbuf = substr($lexbuf, 1);
+		return $ret;
+	}
+
+	protected static function yyerror($msg)
+	{
+		throw new Exception($msg);
+	}
+}
+
+$lexbuf = rand(1000, 9999).'+'.rand(1000, 9999);
+
+$resultKMyacc = KMyacc::yyparse($lexbuf);
+$resultPHP    = eval('return '.$lexbuf. ';');
+var_dump(
+	'raw    : ' . $lexbuf,
+	'KMyacc : ' . $resultKMyacc,
+	'PHP    : ' . $resultPHP
+);
