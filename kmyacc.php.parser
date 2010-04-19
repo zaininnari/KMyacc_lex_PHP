@@ -175,7 +175,7 @@ class KMyacc
 	/*
 	 * Parser entry point
 	 */
-	protected static function yyparse($lexbuf, $yydebug = false)
+	public static function yyparse($lexbuf, $yydebug = false)
 	{
 		self::$lexbuf = $lexbuf;
 		self::$yydebug = $yydebug;
