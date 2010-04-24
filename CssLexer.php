@@ -1,9 +1,28 @@
 <?php
 /**
+ * PHP CSS Lexer
+ *
  * PHP 5.3 or higher is required.
  *
- * base : http://d.hatena.ne.jp/amachang/20080502/1209732467
- * @license MIT License
+ * base source : http://trac.webkit.org/browser/trunk/WebCore/css/tokenizer.flex
+ *
+ * @license Lesser GNU Public License.
+ *
+ * === BEGIN ===
+ * PHP Lexer
+ * http://github.com/zaininnari/KMyacc_lex_PHP
+ * base (JavaScript): http://d.hatena.ne.jp/amachang/20080502/1209732467
+ * license MIT License
+ * ===  END  ===
+ *
+ * === BEGIN ===
+ * tokenizer.flex
+ * source : http://trac.webkit.org/browser/trunk/WebCore/css/tokenizer.flex
+ * @license Lesser GNU Public License. http://webkit.org/coding/lgpl-license.html
+ * ===  END  ===
+ *
+ *
+ *
  */
 require_once dirname(__FILE__) . '/Lexer.php';
 
