@@ -21,6 +21,7 @@ $meta @
 class KMyacc
 {
 	protected static $lexbuf = null;
+	protected static $yydebug = false;
 
 	const YYBADCH = @(YYBADCH);
 	const YYMAXLEX = @(YYMAXLEX);

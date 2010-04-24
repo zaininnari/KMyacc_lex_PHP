@@ -49,7 +49,8 @@ class CssLexer extends Lexer
 			array('w',      '[ \t\r\n\f]*'),
 			array('nl',     '\n|\r\n|\r|\f'),
 			array('range',  '\?{1,6}|{h}(\?{0,5}|{h}(\?{0,4}|{h}(\?{0,3}|{h}(\?{0,2}|{h}(\??|{h})))))'), // range           \?{1,6}|{h}(\?{0,5}|{h}(\?{0,4}|{h}(\?{0,3}|{h}(\?{0,2}|{h}(\??|{h})))))
-			array('nth',    '(-?[0-9]*n[\+-][0-9]+)|(-?[0-9]*n)'),
+			array('nth',    '[\+-]?{intnum}*n([\+-]{intnum})?'),
+
 		),
 
 		'rules' => array(
@@ -76,7 +77,7 @@ class CssLexer extends Lexer
 			array('IDSEL', '#{ident}'),
 			array('IMPORT_SYM', '@import' , null, 'mediaquery'),
 			array('PAGE_SYM', '@page'),
-			array('MEDIA_SYM', '@media', null, 'mediaquery'),
+			array('MEDIA_SYM', 'media_query_exp_list', null, 'mediaquery'),
 			array('FONT_FACE_SYM', '@font-face'),
 			array('CHARSET_SYM', '@charset'),
 			array('NAMESPACE_SYM', '@namespace'),
@@ -121,7 +122,16 @@ class CssLexer extends Lexer
 			array('NOTFUNCTION',  'not\('),
 			array('URI',          'url\({w}{string}{w}\)|url\({w}{url}{w}\)'),
 			array('VARCALL',      '-webkit-var\({w}{ident}{w}\)'),
-			array('FUNCTION',     '{ident}\('),
+
+			////////////////////////////////////////////////////////
+			// original 'FUNCTION'.
+			// but,
+			// > class test{const FUNCTION = 1;}
+			// Parse error: syntax error, unexpected T_FUNCTION
+			//
+			// replace 'FUNCTION' -> 'T_FUNCTION'
+			////////////////////////////////////////////////////////
+			array('T_FUNCTION',     '{ident}\('),
 			array('UNICODERANGE', 'U\+{range}|U\+{h}{1,6}-{h}{1,6}'),
 
 			array('{', '{', 'mediaquery', 'INITIAL', true),
