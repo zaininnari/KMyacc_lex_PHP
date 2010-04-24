@@ -77,7 +77,7 @@ class CssLexer extends Lexer
 			array('IDSEL', '#{ident}'),
 			array('IMPORT_SYM', '@import' , null, 'mediaquery'),
 			array('PAGE_SYM', '@page'),
-			array('MEDIA_SYM', 'media_query_exp_list', null, 'mediaquery'),
+			array('MEDIA_SYM', '@media', null, 'mediaquery'),
 			array('FONT_FACE_SYM', '@font-face'),
 			array('CHARSET_SYM', '@charset'),
 			array('NAMESPACE_SYM', '@namespace'),
