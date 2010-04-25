@@ -26,7 +26,7 @@
  */
 require_once dirname(__FILE__) . '/Lexer.php';
 
-class CssLexer extends Lexer
+class CSSLexer extends Lexer
 {
 	protected static $ignore = true;
 	protected static $ignoreToken = array('COMMENT');
@@ -51,7 +51,7 @@ class CssLexer extends Lexer
 		'defs' => array(
 			array('h',        '[0-9a-fA-F]'),
 			array('nonascii', '[\200-\377]'),
-			array('unicode',  '\\\[0-9a-fA-F]{1,6}[ \t\r\n\f]?'), // \\{h}{1,6}[ \t\r\n\f]?
+			array('unicode',  '\\\{h}{1,6}[ \t\r\n\f]?'), // \\{h}{1,6}[ \t\r\n\f]?
 			array('escape',   '{unicode}|\\\[ -~\200-\377]'), // {unicode}|\\[ -~\200-\377]
 			array('nmstart',  '[_a-zA-Z]|{nonascii}|{escape}'),
 			array('nmchar',   '[_a-zA-Z0-9-]|{nonascii}|{escape}'),
@@ -67,7 +67,7 @@ class CssLexer extends Lexer
 			array('url',    '([!#$%&*-~]|{nonascii}|{escape})*'),
 			array('w',      '[ \t\r\n\f]*'),
 			array('nl',     '\n|\r\n|\r|\f'),
-			array('range',  '\?{1,6}|{h}(\?{0,5}|{h}(\?{0,4}|{h}(\?{0,3}|{h}(\?{0,2}|{h}(\??|{h})))))'), // range           \?{1,6}|{h}(\?{0,5}|{h}(\?{0,4}|{h}(\?{0,3}|{h}(\?{0,2}|{h}(\??|{h})))))
+			array('range',  '\?{1,6}|{h}({h}({h}({h}({h}({h}|\??)|\?{0,2})|\?{0,3})|\?{0,4})|\?{0,5})'), // range           \?{1,6}|{h}(\?{0,5}|{h}(\?{0,4}|{h}(\?{0,3}|{h}(\?{0,2}|{h}(\??|{h})))))
 			array('nth',    '[\+-]?{intnum}*n([\+-]{intnum})?'),
 
 		),

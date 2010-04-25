@@ -21,6 +21,9 @@ $meta @
 class KMyacc
 {
 	protected static $lexbuf = null;
+	protected static $_lexbuf = null;
+	protected static $lexbufMaxLen = null;
+	
 	protected static $yydebug = false;
 
 	const YYBADCH = @(YYBADCH);
@@ -179,8 +182,9 @@ class KMyacc
 	public static function yyparse($lexbuf, $yydebug = false)
 	{
 		self::$lexbuf = $lexbuf;
+		self::$lexbufMaxLen = mb_strlen($lexbuf);
 		self::$yydebug = $yydebug;
-		
+
 		$yyastk = array();
 		$yysstk = array();
 
